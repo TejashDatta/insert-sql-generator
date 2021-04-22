@@ -1,0 +1,7 @@
+tables:
+  - name: 'table1'
+    number_of_records: 10
+    columns:
+      name: random-string
+      age: sequential-integer
+    size_of_bulk: 4

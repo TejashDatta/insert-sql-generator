@@ -1,0 +1,2 @@
+class UndefinedValueTypeError < StandardError
+end
