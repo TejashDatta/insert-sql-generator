@@ -1,34 +1,18 @@
 require_relative '../data_generator'
 
 describe 'DataGenerator' do
-  subject(:data_generator) { DataGenerator.new }
-
-  describe '#generate' do
-    context 'when value_type is random-string' do
-      it 'generates a string' do
-        expect(data_generator.generate('random-string')).to be_an_instance_of(String)
-      end
-    end
-
-    context 'when value_type is undefined' do
-      it 'raises UndefinedValueTypeError' do
-        expect { data_generator.generate('undefined') }.to raise_error(UndefinedValueTypeError)
-      end
-    end
-  end
+  let(:data_generator) { DataGenerator.new }
 
   describe '#random_string' do
-    it 'generates a string of length 10 that has only letters and numbers' do
-      expect(data_generator.random_string).to match(/^'\w{10}'$/)
+    it 'generates a string of length 5 that has only letters and numbers' do
+      expect(data_generator.send(:random_string, 5)).to match(/^'\w{5}'$/)
     end
   end
 
-  describe '#sequential_integer' do
-    subject(:data_generator) { DataGenerator.new }
-
-    it 'generates integers in sequence starting from 0' do
-      expect(data_generator.sequential_integer).to eq(0)
-      expect(data_generator.sequential_integer).to eq(1)
+  describe '#sequential_number' do
+    it 'increments integers by 5 starting from 2' do
+      expect(data_generator.send(:sequential_number, 'example_column', 2, 5)).to eq(2)
+      expect(data_generator.send(:sequential_number, 'example_column', 2, 5)).to eq(7)
     end
   end
 end

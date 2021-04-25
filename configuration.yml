@@ -2,6 +2,13 @@ tables:
   - name: 'table1'
     number_of_records: 10
     columns:
-      name: random-string
-      age: sequential-integer
+    - name: name
+      data_type: string
+      value_type: random
+      length: 5
+    - name: age
+      data_type: integer
+      value_type: sequential
+      start: 2
+      increment: 5
     size_of_bulk: 4
