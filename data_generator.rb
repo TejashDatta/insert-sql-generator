@@ -1,27 +1,30 @@
-require_relative 'errors/undefined_value_type_error'
-
 class DataGenerator
   def initialize
     @state = {}
   end
 
   def generate(column)
-    if column['data_type'] == 'string' && column['value_type'] == 'random'
-      random_string(column['options']['length'])
-    elsif column['data_type'] == 'number' && column['value_type'] == 'sequential'
-      sequential_number(column['name'], column['start'], column['increment'])
-    else
-      raise UndefinedValueTypeError
+    case "#{column['value_type']} #{column['data_type']}"
+    when 'random string'
+      random_string(length: column['length'])
+    when 'random number'
+      random_number(range: column['range'])
+    when 'sequential number'
+      sequential_number(column['name'], start: column['start'], increment: column['increment'])
     end
   end
 
   private
 
-  def random_string(length = 10)
+  def random_string(length: 10)
     "'#{Array.new(length) { [*'a'..'z', *'A'..'Z', *'0'..'9'].sample }.join}'"
   end
 
-  def sequential_number(column_name, start = 1, increment = 1)
+  def random_number(range: [1, 100_000])
+    rand(range[0]..range[1])
+  end
+  
+  def sequential_number(column_name, start: 1, increment: 1)
     @state[column_name] =
       if @state.key? column_name
         @state[column_name] + increment

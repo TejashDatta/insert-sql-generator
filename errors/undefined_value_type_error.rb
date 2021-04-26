@@ -1,2 +1,0 @@
-class UndefinedValueTypeError < StandardError
-end

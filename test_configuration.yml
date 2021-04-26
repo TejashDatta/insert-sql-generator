@@ -1,4 +1,4 @@
-name: 'table1'
+name: 'example_table'
 number_of_records: 10
 size_of_bulk: 4
 columns:
@@ -15,8 +15,3 @@ columns:
   value_type: sequential
   start: 2
   increment: 5
-# - name: join_date
-#   data_type: date
-#   value_type: sequential
-#   start: 
-#   increment:
