@@ -1,5 +1,5 @@
 require 'yaml'
-require_relative 'data_generator'
+require_relative 'column_values_generator'
 
 class InsertSqlGenerator
   def initialize(yaml_configuration_file_path)
@@ -8,7 +8,6 @@ class InsertSqlGenerator
     @columns = table['columns']
     @number_of_records = table['number_of_records']
     @bulk_size = table['size_of_bulk']
-    @data_generator = DataGenerator.new
     @statements = []
   end
 
@@ -20,28 +19,23 @@ class InsertSqlGenerator
   private
 
   def create_statements
-    (@number_of_records / @bulk_size).times { create_statement(@bulk_size) }
-    remaining_records = @number_of_records % @bulk_size
-    create_statement(remaining_records) if remaining_records.positive?
+    tuples = create_tuples
+    @statements = (0...@number_of_records).step(@bulk_size).map do |index|
+      "INSERT INTO #{@table_name} (#{column_names}) VALUES #{tuples[index, @bulk_size].join(', ')};\n"
+    end
   end
-  
-  def create_statement(number_of_tuples)
-    @statements <<
-      "INSERT INTO #{@table_name} (#{column_names}) VALUES #{create_tuples(number_of_tuples)};\n"
+
+  def create_tuples
+    column_values_generator = ColumnValuesGenerator.new(@number_of_records)
+    @columns
+      .map { |column| column_values_generator.generate(column) }
+      .transpose
+      .map { |row_values| row_values.join(', ') }
+      .map { |tuple| "(#{tuple})" }
   end
 
   def column_names
     @columns.map { |column| column['name'] }.join(', ')
-  end
-
-  def create_tuples(number_of_tuples)
-    [*0...number_of_tuples].map { "(#{create_tuple})" }.join(', ')
-  end
-
-  def create_tuple
-    @columns
-      .map { |column| @data_generator.generate(column) }
-      .join(', ')
   end
 
   def write_sql_file

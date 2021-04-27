@@ -15,8 +15,8 @@ columns:
   value_type: sequential
   start: 2
   increment: 5
-# - name: join_date
-#   data_type: date
-#   value_type: sequential
-#   start: 
-#   increment:
+- name: join_date
+  data_type: date
+  value_type: sequential
+  start: '2021-04-30'
+  day_increment: 5
