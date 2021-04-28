@@ -18,21 +18,23 @@ class ColumnValuesGenerator
     end
   end
 
+  private
+
   def random_strings(length: 10)
-    (0...@number_of_records).map do
+    @number_of_records.times.map do
       "'#{Array.new(length) { [*'a'..'z', *'A'..'Z', *'0'..'9'].sample }.join}'"
     end
   end
 
   def random_numbers(range: [1, 100_000])
-    (0...@number_of_records).map { rand(range[0]..range[1]) }
+    @number_of_records.times.map { rand(range[0]..range[1]) }
   end
   
   def sequential_numbers(start: 1, increment: 1)
-    (0...@number_of_records).map { |index| start + index * increment }
+    @number_of_records.times.map { |index| start + index * increment }
   end
 
   def sequential_dates(start: Date.today.to_s, day_increment: 1)
-    (0...@number_of_records).map { |index| "'#{Date.parse(start) + index * day_increment}'" }
+    @number_of_records.times.map { |index| "'#{Date.parse(start) + index * day_increment}'" }
   end
 end

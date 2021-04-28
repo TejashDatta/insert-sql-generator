@@ -1,6 +1,6 @@
-name: 'sample'
-number_of_records: 10
-size_of_bulk: 4
+name: 'spec_test_table'
+number_of_records: 3
+size_of_bulk: 2
 columns:
   - name: name
     data_type: string
@@ -9,14 +9,14 @@ columns:
   - name: age
     data_type: number
     value_type: random
-    range: [5, 90]
+    range: [5, 10]
   - name: rank
     data_type: number
     value_type: sequential
     start: 2
-    increment: 2
+    increment: 5
   - name: join_date
     data_type: date
     value_type: sequential
     start: '2021-04-30'
-    day_increment: 3
+    day_increment: 5

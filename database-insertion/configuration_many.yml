@@ -1,6 +1,6 @@
 name: 'sample'
-number_of_records: 10
-size_of_bulk: 4
+number_of_records: 1000000
+size_of_bulk: 1
 columns:
   - name: name
     data_type: string
