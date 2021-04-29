@@ -8,47 +8,37 @@ class InsertSqlGenerator
     @columns = table['columns']
     @number_of_records = table['number_of_records']
     @bulk_size = table['size_of_bulk']
-    @tuples_to_insert = []
-    @insert_statements = []
   end
 
   def run
-    generate_tuples_to_insert
-    generate_insert_statements
-    write_sql_file
+    write_sql_file(insertion_statements)
   end
 
   private
 
-  def generate_tuples_to_insert
-    column_values_generator = ColumnValuesGenerator.new(@number_of_records)
-    @tuples_to_insert = 
-      @columns
-        .map { |column| column_values_generator.generate(column) }
-        .transpose
-        .map { |row_values| "(#{row_values.join(', ')})" }
-  end
-
-  def generate_insert_statements
-    @insert_statements = 
-      0.step(@number_of_records - 1, @bulk_size).map do |index|
-        "INSERT INTO #{@table_name} (#{join_column_names}) " \
-        "VALUES #{@tuples_to_insert[index, @bulk_size].join(', ')};\n"
-      end
-  end
-
-  def join_column_names
-    @columns.map { |column| column['name'] }.join(', ')
-  end
-
-  def write_sql_file
-    File.open(create_sql_file_name, 'w') do |file|
-      @insert_statements.each { |statement| file.write statement }
+  def write_sql_file(statements)
+    File.open(sql_file_name, 'w') do |file|
+      statements.each { |statement| file.write statement }
     end
   end
 
-  def create_sql_file_name
+  def sql_file_name
     "#{@table_name}_insert_statements.sql"
+  end
+
+  def insertion_statements
+    column_values_generator = ColumnValuesGenerator.new(@number_of_records)
+    @columns
+      .map { |column| column_values_generator.generate(column) }
+      .transpose
+      .map { |row_values| "(#{row_values.join(', ')})" }
+      .each_slice(@bulk_size)
+      .map { |tuples_in_bulk| tuples_in_bulk.join(', ') }
+      .map { |tuple_group| "INSERT INTO #{@table_name} (#{column_names}) VALUES #{tuple_group};\n" }
+  end
+
+  def column_names
+    @columns.map { |column| column['name'] }.join(', ')
   end
 end
 

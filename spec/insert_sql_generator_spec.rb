@@ -3,12 +3,13 @@ require_relative '../insert_sql_generator'
 describe 'InsertSqlGenerator' do
   let(:insert_sql_generator) { InsertSqlGenerator.new('spec_test_configuration.yml') }
   let(:sql_file_name) { 'spec_test_table_insert_statements.sql' }
+  let(:number_of_statements) { 2 }
 
   shared_examples 'sql file writer' do
     after { File.delete(sql_file_name) if File.exist? sql_file_name }
 
     it 'writes sql statements to file' do
-      expect(File.read(sql_file_name).lines.count).to eq(2)
+      expect(File.read(sql_file_name).lines.count).to eq(number_of_statements)
     end
   end
 
@@ -18,52 +19,45 @@ describe 'InsertSqlGenerator' do
     it_behaves_like 'sql file writer'
   end
 
-  describe '#generate_tuples' do
-    before { insert_sql_generator.send(:generate_tuples_to_insert) }
-    let(:tuples) { insert_sql_generator.instance_variable_get(:@tuples_to_insert) }
-    
-    it 'has tuples that have values for all columns' do
-      expect(tuples[0].split(', ').count).to eq(4)
-    end
-    it 'has number of tuples = number of records' do
-      expect(tuples.count).to eq(3)
-    end
-  end
-
-  describe '#generate_insert_statements' do
-    before do
-      insert_sql_generator.send(:generate_tuples_to_insert)
-      insert_sql_generator.send(:generate_insert_statements)
-    end
-    let(:statements) { insert_sql_generator.instance_variable_get(:@insert_statements) }
-    
-    it 'has sql insert statements' do
-      expect(statements[0]).to match(/^INSERT INTO spec_test_table .*;\n$/)
-    end
-    it 'has correct number of statements' do
-      expect(statements.count).to eq(2)
-    end
-  end
-
-  describe '#join_column_names' do
-    it 'returns names of columns seperated by commas' do
-      expect(insert_sql_generator.send(:join_column_names)).to eq('name, age, rank, join_date')
-    end
-  end
-
   describe '#write_sql_file' do
     before do
-      insert_sql_generator.send(:generate_tuples_to_insert)
-      insert_sql_generator.send(:generate_insert_statements)
-      insert_sql_generator.send(:write_sql_file)
+      insert_sql_generator.send(
+        :write_sql_file,
+        insert_sql_generator.send(:insertion_statements)
+      )
     end
 
     it_behaves_like 'sql file writer'
   end
 
-  describe '#create_sql_file_name' do
+  describe '#sql_file_name' do
     it 'creates filename from table name' do
-      expect(insert_sql_generator.send(:create_sql_file_name)).to eq(sql_file_name)
+      expect(insert_sql_generator.send(:sql_file_name)).to eq(sql_file_name)
+    end
+  end
+
+  describe '#insertion_statements' do
+    let(:statements) { insert_sql_generator.send(:insertion_statements) }
+    let(:table_and_column_names_matcher) { 
+      /INSERT INTO spec_test_table \(name, age, rank, join_date\) VALUES/
+    }
+    let(:number_of_columns) { 4 }
+    let(:bulk_size) { 2 }
+    let(:tuples_count_matcher) { 
+      /(?:\((?:[\w'\-]+(?:, )?){#{number_of_columns}}\)[,;]{1} ?){#{bulk_size}}/
+    }
+    
+    it 'has sql insert statements with correct number of tuples that have correct number of values' do
+      expect(statements[0]).to match(/^#{table_and_column_names_matcher} #{tuples_count_matcher}\n$/)
+    end
+    it 'has correct number of statements' do
+      expect(statements.count).to eq(number_of_statements)
+    end
+  end
+
+  describe '#column_names' do
+    it 'returns names of columns seperated by commas' do
+      expect(insert_sql_generator.send(:column_names)).to eq('name, age, rank, join_date')
     end
   end
 end
