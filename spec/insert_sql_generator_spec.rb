@@ -3,13 +3,13 @@ require_relative '../insert_sql_generator'
 describe 'InsertSqlGenerator' do
   let(:insert_sql_generator) { InsertSqlGenerator.new('spec_test_configuration.yml') }
   let(:sql_file_name) { 'spec_test_table_insert_statements.sql' }
-  let(:number_of_statements) { 2 }
+  let(:expected_number_of_statements) { 2 }
 
   shared_examples 'sql file writer' do
     after { File.delete(sql_file_name) if File.exist? sql_file_name }
 
     it 'writes sql statements to file' do
-      expect(File.read(sql_file_name).lines.count).to eq(number_of_statements)
+      expect(File.read(sql_file_name).lines.count).to eq(expected_number_of_statements)
     end
   end
 
@@ -51,7 +51,7 @@ describe 'InsertSqlGenerator' do
       expect(statements[0]).to match(/^#{table_and_column_names_matcher} #{tuples_count_matcher}\n$/)
     end
     it 'has correct number of statements' do
-      expect(statements.count).to eq(number_of_statements)
+      expect(statements.count).to eq(expected_number_of_statements)
     end
   end
 

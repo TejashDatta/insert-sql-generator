@@ -3,8 +3,8 @@ require_relative '../column_values_generator'
 describe 'ColumnValuesGenerator' do
   let(:generator) { ColumnValuesGenerator.new(3) }
   let(:random_string_regex) { /^'\w{5}'$/ }
-  let(:sequential_numbers) { [5, 15, 25] }
-  let(:sequential_dates) { ["'2021-04-20'", "'2021-04-21'", "'2021-04-22'"] }
+  let(:expected_sequential_numbers) { [5, 15, 25] }
+  let(:expected_sequential_dates) { ["'2021-04-20'", "'2021-04-21'", "'2021-04-22'"] }
 
   describe '#generate' do
     let(:generated_column_values) { generator.generate(column) }
@@ -38,7 +38,7 @@ describe 'ColumnValuesGenerator' do
       }
 
       it 'generates numbers starting from 5 incrementing by 10' do
-        expect(generated_column_values).to eq(sequential_numbers)
+        expect(generated_column_values).to eq(expected_sequential_numbers)
       end
     end
 
@@ -48,7 +48,7 @@ describe 'ColumnValuesGenerator' do
       }
 
       it "generates dates starting from '2021-04-20' incrementing by 1 day" do
-        expect(generated_column_values).to eq(sequential_dates)
+        expect(generated_column_values).to eq(expected_sequential_dates)
       end
     end
   end
@@ -67,14 +67,14 @@ describe 'ColumnValuesGenerator' do
 
   describe '#sequential_numbers' do
     it 'generates sequential numbers starting from 5 and incrementing by 10' do
-      expect(generator.send(:sequential_numbers, start: 5, increment: 10)).to eq(sequential_numbers)
+      expect(generator.send(:sequential_numbers, start: 5, increment: 10)).to eq(expected_sequential_numbers)
     end
   end
 
   describe '#sequential dates' do
     it "generates sequential dates starting from '2021-04-20' and incrementing by 1 day" do
       expect(generator.send(:sequential_dates, start: '2021-04-20', day_increment: 1))
-        .to eq(sequential_dates)
+        .to eq(expected_sequential_dates)
     end
   end
 end
