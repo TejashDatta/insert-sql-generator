@@ -10,7 +10,7 @@ class ColumnValuesGenerator
     when 'random string'
       random_strings(length: column['length'])
     when 'random number'
-      random_numbers(range: column['range'])
+      random_numbers(lower_limit: column['lower_limit'], upper_limit: column['upper_limit'])
     when 'sequential number'
       sequential_numbers(start: column['start'], increment: column['increment'])
     when 'sequential date'
@@ -26,8 +26,8 @@ class ColumnValuesGenerator
     end
   end
 
-  def random_numbers(range: [1, 100_000])
-    @number_of_records.times.map { rand(range[0]..range[1]) }
+  def random_numbers(lower_limit: 1, upper_limit: 100_000)
+    @number_of_records.times.map { rand(lower_limit..upper_limit) }
   end
   
   def sequential_numbers(start: 1, increment: 1)

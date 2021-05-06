@@ -24,7 +24,7 @@ describe 'ColumnValuesGenerator' do
 
     context 'when column is random numbers' do
       let(:column) {
-        { 'data_type' => 'number', 'value_type' => 'random', 'range' => [5, 10] }
+        { 'data_type' => 'number', 'value_type' => 'random', 'lower_limit' => 5, 'upper_limit' => 10 }
       }
 
       it 'generates random numbers between 5 and 10' do
@@ -61,7 +61,7 @@ describe 'ColumnValuesGenerator' do
 
   describe '#random_numbers' do
     it 'generates random numbers between 5 and 10' do
-      expect(generator.send(:random_numbers, range: [5, 10])).to all(be_between(5, 10))
+      expect(generator.send(:random_numbers, lower_limit: 5, upper_limit: 10)).to all(be_between(5, 10))
     end
   end
 

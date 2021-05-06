@@ -9,7 +9,8 @@ columns:
   - name: age
     data_type: number
     value_type: random
-    range: [5, 90]
+    lower_limit: 5
+    upper_limit: 10
   - name: rank
     data_type: number
     value_type: sequential
