@@ -1,0 +1,23 @@
+name: 'sample'
+number_of_records: 1000000
+size_of_bulk: 1
+columns:
+  - name: name
+    data_type: string
+    value_type: random
+    length: 5
+  - name: age
+    data_type: number
+    value_type: random
+    lower_limit: 5
+    upper_limit: 10
+  - name: rank
+    data_type: number
+    value_type: sequential
+    start: 2
+    increment: 2
+  - name: join_date
+    data_type: date
+    value_type: sequential
+    start: '2021-04-30'
+    day_increment: 3
